@@ -5,23 +5,22 @@ import java.util.List;
 import br.com.alura.jdbc.dao.CategoriaDAO;
 import br.com.alura.jdbc.factory.ConnectionFactory;
 import br.com.alura.jdbc.model.Categoria;
+import br.com.alura.jdbc.model.Produto;
 
 public class TestaListagemCategorias {
 
 	public static void main(String[] args) throws SQLException {
-		
-		try(Connection connection = new ConnectionFactory().recuperarConexao()) {
+
+		try (Connection connection = new ConnectionFactory().recuperarConexao()) {
 			CategoriaDAO categoriaDAO = new CategoriaDAO(connection);
-			List<Categoria> listaCategoria = categoriaDAO.listar();
-			
-			listaCategoria.stream().forEach(ct -> System.out.println(ct.getNome()));
-			
-			//for(Categoria c: listaCategoria) {
-				//System.out.println(c.getNome());
-			//}
+			List<Categoria> listaDeCategorias = categoriaDAO.listarComProduto();
+			listaDeCategorias.stream().forEach(ct -> {
+				System.out.println(ct.getNome());
+				for (Produto produto : ct.getProdutos()) {
+					System.out.println(ct.getNome() + " - " + produto.getNome());
+				}
+			});
 		}
-		
-		
 	}
 
 }

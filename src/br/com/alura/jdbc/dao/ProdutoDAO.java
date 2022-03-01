@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.alura.jdbc.factory.ConnectionFactory;
+import br.com.alura.jdbc.model.Categoria;
 import br.com.alura.jdbc.model.Produto;
 
 public class ProdutoDAO {
@@ -39,21 +40,41 @@ public class ProdutoDAO {
 			}
 		}
 	}
-	
+
 	public List<Produto> lista() throws SQLException {
 		List<Produto> produtos = new ArrayList<>();
-		
+
 		String sql = "SELECT ID, NOME, DESCRICAO FROM PRODUTO";
-		try(PreparedStatement pstm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+		try (PreparedStatement pstm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 			pstm.execute();
-			
-			try(ResultSet rs = pstm.getGeneratedKeys()) {
-				while(rs.next()) {
+
+			try (ResultSet rs = pstm.getGeneratedKeys()) {
+				while (rs.next()) {
 					Produto produto = new Produto(rs.getInt(1), rs.getString(2), rs.getString(3));
 					produtos.add(produto);
 				}
 			}
 		}
 		return produtos;
+	}
+
+	public List<Produto> buscar(Categoria ct) throws SQLException {
+
+		List<Produto> produtos = new ArrayList<>();
+
+		String sql = "SELECT ID, NOME, DESCRICAO FROM PRODUTO WHERE CATEGORIA_ID = ?";
+		try (PreparedStatement pstm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+			pstm.setInt(1, ct.getId());
+			pstm.execute();
+
+			try (ResultSet rs = pstm.getGeneratedKeys()) {
+				while (rs.next()) {
+					Produto produto = new Produto(rs.getInt(1), rs.getString(2), rs.getString(3));
+					produtos.add(produto);
+				}
+			}
+		}
+		return produtos;
+
 	}
 }
